@@ -1,0 +1,12 @@
+# Gallery Categories Configuration
+# Each line is a category name (matches a folder inside img/)
+# Lines starting with # are comments
+# To add a new category: add folder name here and create img/<folder_name>/ with images
+# To remove a category: delete or comment out the line
+
+gallery
+portrait
+wedding
+landscape
+drone
+videography

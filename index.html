@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zxx">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -23,6 +23,233 @@
     <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
     <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="css/style.css" type="text/css">
+
+    <style>
+        /* ===== Dynamic Gallery Styles ===== */
+
+        /* Category Filter Bar */
+        .gallery-categories {
+            text-align: center;
+            padding: 20px 0 30px;
+        }
+        .gallery-categories .cat-btn {
+            display: inline-block;
+            padding: 8px 24px;
+            margin: 5px 8px;
+            font-family: 'Quantico', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #666;
+            background: transparent;
+            border: 2px solid #ddd;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .gallery-categories .cat-btn:hover {
+            color: #009603;
+            border-color: #009603;
+        }
+        .gallery-categories .cat-btn.active {
+            color: #fff;
+            background: #009603;
+            border-color: #009603;
+        }
+
+        /* Gallery Masonry Layout (CSS columns for zigzag effect) */
+        .dynamic-gallery {
+            column-count: 3;
+            column-gap: 20px;
+            padding: 0 40px 40px;
+        }
+        @media (max-width: 767px) {
+            .dynamic-gallery {
+                column-gap: 10px;
+                padding: 0 10px 30px;
+            }
+        }
+        @media (max-width: 479px) {
+            .dynamic-gallery {
+                column-count: 1;
+            }
+        }
+
+        /* Gallery Item */
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+            cursor: pointer;
+            background: #111;
+            margin-bottom: 15px;
+            break-inside: avoid;
+        }
+        @media (max-width: 767px) {
+            .gallery-item {
+                margin-bottom: 8px;
+            }
+        }
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+        .gallery-item:hover img {
+            transform: scale(1.05);
+            opacity: 0.75;
+        }
+
+        /* Hover overlay with plus icon */
+        .gallery-item .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .gallery-item:hover .overlay {
+            opacity: 1;
+        }
+        .gallery-item .overlay .icon_plus,
+        .gallery-item .overlay .fa {
+            font-size: 36px;
+            color: #fff;
+        }
+
+        /* Video item play icon */
+        .gallery-item.video-item .overlay .fa-play-circle {
+            font-size: 60px;
+        }
+        .gallery-item.video-item {
+            position: relative;
+        }
+        .gallery-item.video-item::after {
+            content: '\f04b';
+            font-family: 'FontAwesome';
+            position: absolute;
+            bottom: 10px;
+            right: 12px;
+            color: #fff;
+            font-size: 18px;
+            background: rgba(255, 0, 0, 0.85);
+            border-radius: 4px;
+            padding: 4px 10px;
+            pointer-events: none;
+        }
+
+        /* Fullscreen Lightbox */
+        .lightbox-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 99999;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .lightbox-overlay.active {
+            display: flex;
+        }
+        .lightbox-overlay img {
+            max-width: 92vw;
+            max-height: 88vh;
+            object-fit: contain;
+            border-radius: 4px;
+            box-shadow: 0 4px 40px rgba(0, 0, 0, 0.5);
+        }
+        .lightbox-overlay .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 40px;
+            color: #fff;
+            cursor: pointer;
+            z-index: 100000;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+        .lightbox-overlay .lightbox-close:hover {
+            color: #009603;
+        }
+        .lightbox-overlay .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 50px;
+            color: #fff;
+            cursor: pointer;
+            z-index: 100000;
+            padding: 10px;
+            transition: color 0.2s;
+            user-select: none;
+        }
+        .lightbox-overlay .lightbox-nav:hover {
+            color: #009603;
+        }
+        .lightbox-overlay .lightbox-prev {
+            left: 20px;
+        }
+        .lightbox-overlay .lightbox-next {
+            right: 20px;
+        }
+        .lightbox-overlay .lightbox-counter {
+            color: #999;
+            margin-top: 15px;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 14px;
+        }
+
+        /* Video in lightbox */
+        .lightbox-overlay iframe {
+            max-width: 90vw;
+            max-height: 80vh;
+            width: 900px;
+            height: 506px;
+            border: none;
+            border-radius: 4px;
+        }
+
+        /* Loading state */
+        .gallery-loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 16px;
+        }
+
+        /* Empty state */
+        .gallery-empty {
+            text-align: center;
+            padding: 80px 20px;
+            color: #999;
+            font-family: 'Open Sans', sans-serif;
+        }
+        .gallery-empty i {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+
+        /* Gallery section spacing */
+        .gallery-section.spad {
+            padding-top: 0;
+        }
+    </style>
 </head>
 
 <body>
@@ -43,8 +270,6 @@
                     </div>
                     <nav class="nav-menu mobile-menu">
                         <ul>
-                            <!-- <li><a href="./index.html">Home</a></li>
-                            <li><a href="./about.html">About</a></li> -->
                             <li></li>
                             <li></li>
                             <li></li>
@@ -53,15 +278,6 @@
                             <li><a href="./services.html">Services</a></li>
                             <li></li>
                             <li><a href="./pricing.html">Pricing</a></li>
-                            <!-- <li><a href="./portfolio.html">Portfolio</a></li>
-                            <li><a href="./blog.html">Blog</a></li>
-                            <li><a href="#">Pages</a>
-                                <ul class="dropdown">
-                                    <li><a href="./gallery.html">Gallery</a></li>
-                                    <li><a href="./portfolio-details.html">Portfolio Details</a></li>
-                                    <li><a href="./blog-details.html">Blog Details</a></li>
-                                </ul>
-                            </li> -->
                             <li></li>
                             <li><a href="./contact.html">Contact</a></li>
                         </ul>
@@ -92,315 +308,28 @@
     <!-- Breadcrumb End -->
 
     <!-- Gallery Section Begin -->
-    <div class="gallery-section spad">
-        <!-- <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="filter-controls">
-                        <ul>
-                            <li class="active" data-filter="*">All</li>
-                            <li data-filter=".fashion">Portrait</li>
-                            <li data-filter=".lifestyle">Lifestyle</li>
-                            <li data-filter=".natural">Natural</li>
-                            <li data-filter=".wedding">Wedding</li>
-                            <li data-filter=".videos">Videos</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-12 p-0">
-                    <div class="gallery-filter">
-
-                        <div class="gf-item set-bg fashion" data-setbg="img/gallery/gallery-1.jpg">
-                            <a href="img/gallery/gallery-1.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item small-height set-bg lifestyle" data-setbg="img/gallery/gallery-2.jpg">
-                            <a href="img/gallery/gallery-2.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item large-small-height set-bg natural" data-setbg="img/gallery/gallery-3.jpg">
-                            <a href="img/gallery/gallery-3.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <!-- <div class="gf-item small-height set-bg wedding" data-setbg="img/gallery/gallery-4.jpg">
-                            <a href="img/gallery/gallery-4.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div> -->
-                        <div class="gf-item set-bg lifestyle" data-setbg="img/gallery/gallery-18.jpg">
-                            <a href="img/gallery/gallery-18.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item large-height set-bg natural" data-setbg="img/gallery/gallery-6.jpg">
-                            <a href="img/gallery/gallery-23.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item set-bg videos" data-setbg="img/gallery/gallery-7.jpg">
-                            <a href="img/gallery/gallery-7.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item set-bg fashion" data-setbg="img/gallery/gallery-8.jpg">
-                            <a href="img/gallery/gallery-8.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item medium-large-height set-bg videos" data-setbg="img/gallery/gallery-9.jpg">
-                            <a href="img/gallery/gallery-9.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <!-- <div class="gf-item large-height set-bg fashion" data-setbg="img/gallery/gallery-6.jpg">
-                            <a href="img/gallery/gallery-22.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div> -->
-                        <div class="gf-item set-bg wedding" data-setbg="img/gallery/gallery-10.jpg">
-                            <a href="img/gallery/gallery-10.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item large-height set-bg wedding" data-setbg="img/gallery/gallery-11.jpg">
-                            <a href="img/gallery/gallery-11.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item small-height set-bg wedding" data-setbg="img/gallery/gallery-12.jpg">
-                            <a href="img/gallery/gallery-12.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item set-bg wedding" data-setbg="img/gallery/gallery-13.jpg">
-                            <a href="img/gallery/gallery-13.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item large-height set-bg wedding" data-setbg="img/gallery/gallery-14.jpg">
-                            <a href="img/gallery/gallery-14.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <!-- <div class="gf-item set-bg wedding" data-setbg="img/gallery/gallery-15.jpg">
-                            <a href="img/gallery/gallery-22.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div> -->
-                        <div class="gf-item large-height set-bg wedding" data-setbg="img/gallery/gallery-16.jpg">
-                            <a href="img/gallery/gallery-16.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item medium-small-height set-bg wedding" data-setbg="img/gallery/gallery-17.jpg">
-                            <a href="img/gallery/gallery-17.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <!-- <div class="gf-item medium-small-height set-bg wedding" data-setbg="img/gallery/gallery-17.jpg">
-                            <a href="img/gallery/gallery-18.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div> -->
-                        <div class="gf-item medium-small-height set-bg wedding" data-setbg="img/gallery/gallery-22.jpg">
-                            <a href="img/gallery/gallery-22.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <!-- </div>
-                        <div class="gf-item medium-small-height set-bg wedding" data-setbg="img/gallery/gallery-20.jpg">
-                            <a href="img/gallery/gallery-20.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        </div>
-                        <div class="gf-item medium-small-height set-bg wedding" data-setbg="img/gallery/gallery-17.jpg">
-                            <a href="img/gallery/gallery-21.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        </div>
-                        <div class="gf-item medium-small-height set-bg wedding" data-setbg="img/gallery/gallery-17.jpg">
-                            <a href="img/gallery/gallery-22.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div> -->
-                        <div class="gf-item medium-small-height set-bg wedding" data-setbg="img/gallery/gallery-23.jpg">
-                            <a href="img/gallery/gallery-23.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                    </div>
-                </div>
+    <section class="gallery-section spad">
+        <div class="container">
+            <!-- Category Filter Buttons (built dynamically from gallery-data.js) -->
+            <div class="gallery-categories" id="galleryCategoryBar">
             </div>
         </div>
-        <!-- <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-12 p-0">
-                    <div class="gallery-filter">
 
-                        <div class="gf-item set-bg fashion" data-setbg="img/gallery/gallery-1.jpg">
-                            <a href="img/gallery/gallery-1.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item small-height set-bg lifestyle" data-setbg="img/gallery/gallery-2.jpg">
-                            <a href="img/gallery/gallery-2.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item large-small-height set-bg natural" data-setbg="img/gallery/gallery-3.jpg">
-                            <a href="img/gallery/gallery-3.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                         <div class="gf-item small-height set-bg wedding" data-setbg="img/gallery/gallery-4.jpg">
-                            <a href="img/gallery/gallery-4.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div> -->
-                        <!-- <div class="gf-item set-bg lifestyle" data-setbg="img/gallery/gallery-5.jpg">
-                            <a href="img/gallery/gallery-18.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item large-height set-bg natural" data-setbg="img/gallery/gallery-6.jpg">
-                            <a href="img/gallery/gallery-23.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item set-bg videos" data-setbg="img/gallery/gallery-7.jpg">
-                            <a href="img/gallery/gallery-7.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item set-bg fashion" data-setbg="img/gallery/gallery-8.jpg">
-                            <a href="img/gallery/gallery-8.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item medium-large-height set-bg videos" data-setbg="img/gallery/gallery-9.jpg">
-                            <a href="img/gallery/gallery-9.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item large-height set-bg fashion" data-setbg="img/gallery/gallery-6.jpg">
-                            <a href="img/gallery/gallery-22.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item set-bg wedding" data-setbg="img/gallery/gallery-10.jpg">
-                            <a href="img/gallery/gallery-10.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item large-height set-bg wedding" data-setbg="img/gallery/gallery-11.jpg">
-                            <a href="img/gallery/gallery-11.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item small-height set-bg wedding" data-setbg="img/gallery/gallery-12.jpg">
-                            <a href="img/gallery/gallery-12.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item set-bg wedding" data-setbg="img/gallery/gallery-13.jpg">
-                            <a href="img/gallery/gallery-13.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item large-height set-bg wedding" data-setbg="img/gallery/gallery-14.jpg">
-                            <a href="img/gallery/gallery-14.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item set-bg wedding" data-setbg="img/gallery/gallery-15.jpg">
-                            <a href="img/gallery/gallery-22.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item large-height set-bg wedding" data-setbg="img/gallery/gallery-16.jpg">
-                            <a href="img/gallery/gallery-16.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item medium-small-height set-bg wedding" data-setbg="img/gallery/gallery-17.jpg">
-                            <a href="img/gallery/gallery-17.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item medium-small-height set-bg wedding" data-setbg="img/gallery/gallery-17.jpg">
-                            <a href="img/gallery/gallery-18.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item medium-small-height set-bg wedding" data-setbg="img/gallery/gallery-17.jpg">
-                            <a href="img/gallery/gallery-22.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        </div>
-                        <div class="gf-item medium-small-height set-bg wedding" data-setbg="img/gallery/gallery-17.jpg">
-                            <a href="img/gallery/gallery-20.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        </div>
-                        <div class="gf-item medium-small-height set-bg wedding" data-setbg="img/gallery/gallery-17.jpg">
-                            <a href="img/gallery/gallery-21.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        </div>
-                        <div class="gf-item medium-small-height set-bg wedding" data-setbg="img/gallery/gallery-17.jpg">
-                            <a href="img/gallery/gallery-22.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        </div>
-                        <div class="gf-item medium-small-height set-bg wedding" data-setbg="img/gallery/gallery-17.jpg">
-                            <a href="img/gallery/gallery-23.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-        <div class="load-more-btn portfolio-btn">
-            <a href="#">Load More</a>
+        <!-- Gallery Grid (built dynamically) -->
+        <div class="dynamic-gallery" id="galleryGrid">
+            <div class="gallery-loading">Loading gallery...</div>
         </div>
-    </div>
+    </section>
     <!-- Gallery Section End -->
 
-    <!-- Footer Section Begin -->
-    <!-- <footer class="footer-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="fs-about">
-                        <div class="fa-logo">
-                            <a href="#">
-                                <img src="img/f-logo.png" alt="">
-                            </a>
-                        </div>
-                        <p>Ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
-                            et dolore magna aliqua.</p>
-                        <div class="fa-social">
-                            <a href="#"><i class="fa fa-facebook"></i></a>
-                            <a href="#"><i class="fa fa-twitter"></i></a>
-                            <a href="#"><i class="fa fa-youtube-play"></i></a>
-                            <a href="#"><i class="fa fa-instagram"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="fs-widget">
-                        <h5>Instagram</h5>
-                        <div class="fw-instagram">
-                            <img src="img/instagram/insta-1.jpg" alt="">
-                            <img src="img/instagram/insta-2.jpg" alt="">
-                            <img src="img/instagram/insta-3.jpg" alt="">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="fs-widget">
-                        <h5>Quick links</h5>
-                        <ul>
-                            <li><a href="#">Home</a></li>
-                            <li><a href="#">About</a></li>
-                            <li><a href="#">Contact</a></li>
-                        </ul>
-                        <ul>
-                            <li><a href="#">Gallery</a></li>
-                            <li><a href="#">Portfolio</a></li>
-                            <li><a href="#">Services</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="fs-widget">
-                        <h5>Subscribe</h5>
-                        <p>Imolor amet consectetur adipiscing elit, sed do eiusmod tempor incididunt.</p>
-                        <div class="fw-subscribe">
-                            <form action="#">
-                                <input type="text" placeholder="Email">
-                                <button type="submit"><i class="fa fa-send"></i></button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-12">
-                    <div class="copyright-text">
-                        <p>Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. 
-  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-  Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer> -->
-    <!-- Footer Section End -->
+    <!-- Fullscreen Lightbox -->
+    <div class="lightbox-overlay" id="lightbox">
+        <span class="lightbox-close">&times;</span>
+        <span class="lightbox-nav lightbox-prev"><i class="fa fa-chevron-left"></i></span>
+        <span class="lightbox-nav lightbox-next"><i class="fa fa-chevron-right"></i></span>
+        <div class="lightbox-content" id="lightboxContent"></div>
+        <div class="lightbox-counter" id="lightboxCounter"></div>
+    </div>
 
     <!-- Search model Begin -->
     <div class="search-model">
@@ -417,11 +346,256 @@
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.magnific-popup.min.js"></script>
-    <script src="js/isotope.pkgd.min.js"></script>
-    <script src="js/masonry.pkgd.min.js"></script>
     <script src="js/jquery.slicknav.js"></script>
     <script src="js/owl.carousel.min.js"></script>
-    <script src="js/main.js"></script>
+
+    <!-- Gallery Data (auto-generated by build_gallery.py) -->
+    <script src="js/gallery-data.js"></script>
+
+    <script>
+    'use strict';
+
+    (function ($) {
+
+        /*------------------
+            Preloader
+        --------------------*/
+        $(window).on('load', function () {
+            $(".loader").fadeOut();
+            $("#preloder").delay(200).fadeOut("slow");
+        });
+
+        /*------------------
+            Search
+        --------------------*/
+        $('.search-switch').on('click', function () {
+            $('.search-model').fadeIn(400);
+        });
+        $('.search-close-switch').on('click', function () {
+            $('.search-model').fadeOut(400, function () {
+                $('#search-input').val('');
+            });
+        });
+
+        /*------------------
+            Navigation
+        --------------------*/
+        $(".mobile-menu").slicknav({
+            prependTo: '#mobile-menu-wrap',
+            allowParentLinks: true
+        });
+
+        /*------------------
+            Gallery System
+        --------------------*/
+        var galleryData = window.GALLERY_DATA || { categories: [], images: {}, videos: {} };
+        var $grid = $('#galleryGrid');
+        var $catBar = $('#galleryCategoryBar');
+        var currentCategory = 'all';
+
+        // All viewable items for lightbox navigation
+        var lightboxItems = [];
+        var lightboxIndex = 0;
+
+        // --- YouTube helpers ---
+        function extractYoutubeId(url) {
+            if (!url) return '';
+            // Standard watch URL
+            var m = url.match(/[?&]v=([^&#]+)/);
+            if (m) return m[1];
+            // Short URL
+            m = url.match(/youtu\.be\/([^?&#]+)/);
+            if (m) return m[1];
+            // Shorts URL
+            m = url.match(/youtube\.com\/shorts\/([^?&#]+)/);
+            if (m) return m[1];
+            return '';
+        }
+
+        function getYoutubeThumbnail(videoId) {
+            return 'https://img.youtube.com/vi/' + videoId + '/hqdefault.jpg';
+        }
+
+        function getYoutubeEmbedUrl(url) {
+            var id = extractYoutubeId(url);
+            return id ? 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0' : url;
+        }
+
+        // --- Build category buttons ---
+        function buildCategoryBar() {
+            var cats = galleryData.categories || [];
+            cats.forEach(function (cat, index) {
+                var $btn = $('<button>', {
+                    'class': 'cat-btn' + (index === 0 ? ' active' : ''),
+                    'data-category': cat.id,
+                    text: cat.name
+                });
+                $catBar.append($btn);
+            });
+        }
+
+        // --- Build gallery grid ---
+        function buildGallery(category) {
+            $grid.empty();
+            lightboxItems = [];
+
+            var imagesToShow = [];
+            var videosToShow = [];
+
+            if (category === 'all') {
+                // Show all images from all categories
+                galleryData.categories.forEach(function (cat) {
+                    var imgs = galleryData.images[cat.id] || [];
+                    imgs.forEach(function (src) {
+                        imagesToShow.push({ src: src, category: cat.id });
+                    });
+                    var vids = galleryData.videos[cat.id] || [];
+                    vids.forEach(function (url) {
+                        videosToShow.push({ url: url, category: cat.id });
+                    });
+                });
+            } else {
+                var imgs = galleryData.images[category] || [];
+                imgs.forEach(function (src) {
+                    imagesToShow.push({ src: src, category: category });
+                });
+                var vids = galleryData.videos[category] || [];
+                vids.forEach(function (url) {
+                    videosToShow.push({ url: url, category: category });
+                });
+            }
+
+            if (imagesToShow.length === 0 && videosToShow.length === 0) {
+                $grid.html(
+                    '<div class="gallery-empty">' +
+                    '<i class="fa fa-camera"></i>' +
+                    '<p>No photos or videos in this category yet.</p>' +
+                    '</div>'
+                );
+                return;
+            }
+
+            // Add images
+            imagesToShow.forEach(function (item, idx) {
+                var $el = $('<div>', { 'class': 'gallery-item' });
+                var $img = $('<img>', {
+                    src: item.src,
+                    alt: 'Gallery photo',
+                    loading: 'lazy'
+                });
+                var $overlay = $('<div>', { 'class': 'overlay' })
+                    .append('<span class="icon_plus"></span>');
+
+                $el.append($img).append($overlay);
+                $el.attr('data-lightbox-index', lightboxItems.length);
+                lightboxItems.push({ type: 'image', src: item.src });
+                $grid.append($el);
+            });
+
+            // Add videos
+            videosToShow.forEach(function (item) {
+                var videoId = extractYoutubeId(item.url);
+                if (!videoId) return;
+
+                var thumb = getYoutubeThumbnail(videoId);
+                var $el = $('<div>', { 'class': 'gallery-item video-item' });
+                var $img = $('<img>', {
+                    src: thumb,
+                    alt: 'Video thumbnail',
+                    loading: 'lazy'
+                });
+                var $overlay = $('<div>', { 'class': 'overlay' })
+                    .append('<i class="fa fa-play-circle"></i>');
+
+                $el.append($img).append($overlay);
+                $el.attr('data-lightbox-index', lightboxItems.length);
+                lightboxItems.push({ type: 'video', url: item.url, embedUrl: getYoutubeEmbedUrl(item.url) });
+                $grid.append($el);
+            });
+        }
+
+        // --- Lightbox ---
+        var $lightbox = $('#lightbox');
+        var $lbContent = $('#lightboxContent');
+        var $lbCounter = $('#lightboxCounter');
+
+        function openLightbox(index) {
+            if (index < 0 || index >= lightboxItems.length) return;
+            lightboxIndex = index;
+
+            var item = lightboxItems[index];
+            $lbContent.empty();
+
+            if (item.type === 'image') {
+                $lbContent.html('<img src="' + item.src + '" alt="Gallery photo">');
+            } else if (item.type === 'video') {
+                // Open YouTube videos in a new tab (embeds don't work from file:// protocol)
+                window.open(item.url, '_blank');
+                closeLightbox();
+                return;
+            }
+
+            $lbCounter.text((index + 1) + ' / ' + lightboxItems.length);
+            $lightbox.addClass('active');
+            $('body').css('overflow', 'hidden');
+        }
+
+        function closeLightbox() {
+            $lightbox.removeClass('active');
+            $lbContent.empty(); // stop video playback
+            $('body').css('overflow', '');
+        }
+
+        function navigateLightbox(direction) {
+            var newIndex = lightboxIndex + direction;
+            if (newIndex < 0) newIndex = lightboxItems.length - 1;
+            if (newIndex >= lightboxItems.length) newIndex = 0;
+            openLightbox(newIndex);
+        }
+
+        // Lightbox event handlers
+        $lightbox.find('.lightbox-close').on('click', closeLightbox);
+        $lightbox.find('.lightbox-prev').on('click', function () { navigateLightbox(-1); });
+        $lightbox.find('.lightbox-next').on('click', function () { navigateLightbox(1); });
+
+        // Click on background to close
+        $lightbox.on('click', function (e) {
+            if ($(e.target).hasClass('lightbox-overlay')) closeLightbox();
+        });
+
+        // Keyboard navigation
+        $(document).on('keydown', function (e) {
+            if (!$lightbox.hasClass('active')) return;
+            if (e.key === 'Escape' || e.keyCode === 27) closeLightbox();
+            if (e.key === 'ArrowLeft' || e.keyCode === 37) navigateLightbox(-1);
+            if (e.key === 'ArrowRight' || e.keyCode === 39) navigateLightbox(1);
+        });
+
+        // Click gallery item to open lightbox
+        $grid.on('click', '.gallery-item', function () {
+            var idx = parseInt($(this).attr('data-lightbox-index'), 10);
+            openLightbox(idx);
+        });
+
+        // Category button clicks
+        $catBar.on('click', '.cat-btn', function () {
+            $catBar.find('.cat-btn').removeClass('active');
+            $(this).addClass('active');
+            currentCategory = $(this).attr('data-category');
+            buildGallery(currentCategory);
+        });
+
+        // --- Initialize ---
+        buildCategoryBar();
+        // Auto-select first category
+        var firstCat = (galleryData.categories && galleryData.categories.length > 0)
+            ? galleryData.categories[0].id
+            : 'all';
+        currentCategory = firstCat;
+        buildGallery(firstCat);
+
+    })(jQuery);
+    </script>
 </body>
 
 </html>

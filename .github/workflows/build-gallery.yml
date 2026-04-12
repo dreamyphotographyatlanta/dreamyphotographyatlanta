@@ -1,0 +1,39 @@
+name: Build Gallery Data
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'img/**'
+      - 'category.txt'
+      - 'build_gallery.py'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run build_gallery.py
+        run: python build_gallery.py
+
+      - name: Check for changes
+        id: check
+        run: |
+          git diff --quiet js/gallery-data.js || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push updated gallery-data.js
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add js/gallery-data.js
+          git commit -m "Auto-update gallery-data.js"
+          git push
