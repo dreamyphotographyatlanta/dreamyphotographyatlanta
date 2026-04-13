@@ -3,13 +3,58 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="Dreamy Photography Atlanta">
-    <meta name="keywords" content="Dreamy, Photography, Atlanta, Wedding, Drone, Portrait">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Dreamy Photography Atlanta</title>
+
+    <title>Atlanta Wedding &amp; Portrait Photographer | Dreamy Photography Atlanta</title>
+    <meta name="description" content="Professional photography in Atlanta, GA — weddings, portraits, events, and drone shoots. Browse our latest gallery and book your session with Dreamy Photography Atlanta.">
+    <meta name="keywords" content="Atlanta photographer, wedding photographer Atlanta, portrait photographer Atlanta, event photography Atlanta, drone photography Atlanta, Marietta photographer, commercial photography Georgia">
+    <meta name="author" content="Dreamy Photography Atlanta">
+    <link rel="canonical" href="https://www.dreamyphotographyatlanta.com/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.dreamyphotographyatlanta.com/">
+    <meta property="og:title" content="Atlanta Wedding &amp; Portrait Photographer | Dreamy Photography Atlanta">
+    <meta property="og:description" content="Professional photography in Atlanta, GA — weddings, portraits, events, and drone shoots. Browse our latest gallery and book your session.">
+    <meta property="og:image" content="https://www.dreamyphotographyatlanta.com/img/DPA_web_logo.png">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Atlanta Wedding &amp; Portrait Photographer | Dreamy Photography Atlanta">
+    <meta name="twitter:description" content="Professional photography in Atlanta, GA — weddings, portraits, events, and drone shoots.">
+    <meta name="twitter:image" content="https://www.dreamyphotographyatlanta.com/img/DPA_web_logo.png">
 
     <link rel="icon" type="image/png" href="img/DPA_web_logo.png">
+
+    <!-- LocalBusiness Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "@id": "https://www.dreamyphotographyatlanta.com/#business",
+      "name": "Dreamy Photography Atlanta",
+      "image": "https://www.dreamyphotographyatlanta.com/img/DPA_web_logo.png",
+      "url": "https://www.dreamyphotographyatlanta.com/",
+      "email": "dreamyphotographyatlanta@gmail.com",
+      "description": "Professional photography studio in Atlanta, GA specializing in weddings, portraits, events, and drone photography.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Atlanta",
+        "addressRegion": "GA",
+        "addressCountry": "US"
+      },
+      "areaServed": [
+        { "@type": "City", "name": "Atlanta" },
+        { "@type": "City", "name": "Marietta" },
+        { "@type": "State", "name": "Georgia" }
+      ],
+      "priceRange": "$99 - $399+",
+      "sameAs": [
+        "https://www.instagram.com/dreamy_photography_atlanta/"
+      ]
+    }
+    </script>
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css?family=Quantico:400,700&display=swap" rel="stylesheet">
@@ -475,12 +520,20 @@
                 return;
             }
 
+            // Helper: build descriptive alt text for SEO
+            function buildAltText(category, index) {
+                var catLabel = category.charAt(0).toUpperCase() + category.slice(1);
+                return catLabel + ' photography in Atlanta — Dreamy Photography Atlanta (photo ' + (index + 1) + ')';
+            }
+
             // Add images
             imagesToShow.forEach(function (item, idx) {
                 var $el = $('<div>', { 'class': 'gallery-item' });
+                var altText = buildAltText(item.category, idx);
                 var $img = $('<img>', {
                     src: item.src,
-                    alt: 'Gallery photo',
+                    alt: altText,
+                    title: altText,
                     loading: 'lazy'
                 });
                 var $overlay = $('<div>', { 'class': 'overlay' })
@@ -493,15 +546,17 @@
             });
 
             // Add videos
-            videosToShow.forEach(function (item) {
+            videosToShow.forEach(function (item, idx) {
                 var videoId = extractYoutubeId(item.url);
                 if (!videoId) return;
 
                 var thumb = getYoutubeThumbnail(videoId);
                 var $el = $('<div>', { 'class': 'gallery-item video-item' });
+                var vAlt = (item.category.charAt(0).toUpperCase() + item.category.slice(1)) + ' photography video — Dreamy Photography Atlanta';
                 var $img = $('<img>', {
                     src: thumb,
-                    alt: 'Video thumbnail',
+                    alt: vAlt,
+                    title: vAlt,
                     loading: 'lazy'
                 });
                 var $overlay = $('<div>', { 'class': 'overlay' })
