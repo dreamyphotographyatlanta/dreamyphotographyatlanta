@@ -294,6 +294,39 @@
         .gallery-section.spad {
             padding-top: 0;
         }
+
+        /* Tighter breadcrumb spacing (was 55px top / 100px bottom) */
+        .breadcrumb-option.spad {
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+        @media (max-width: 767px) {
+            .breadcrumb-option.spad {
+                padding-top: 10px;
+                padding-bottom: 5px;
+            }
+        }
+
+        /* Smaller category buttons on mobile */
+        @media (max-width: 767px) {
+            .gallery-categories {
+                padding: 5px 0 5px;
+            }
+            .gallery-categories .cat-btn {
+                padding: 5px 14px;
+                margin: 3px 4px;
+                font-size: 10px;
+                letter-spacing: 0.5px;
+                border-width: 1.5px;
+            }
+        }
+        @media (max-width: 479px) {
+            .gallery-categories .cat-btn {
+                padding: 4px 11px;
+                margin: 2px 3px;
+                font-size: 9px;
+            }
+        }
     </style>
 </head>
 
