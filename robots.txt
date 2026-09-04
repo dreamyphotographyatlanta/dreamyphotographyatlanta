@@ -6,4 +6,4 @@ Disallow: /sass/
 Disallow: /build_gallery.py
 Disallow: /category.txt
 
-Sitemap: https://www.dreamyphotographyatlanta.com/sitemap.xml
+Sitemap: https://dpatl.com/sitemap.xml
